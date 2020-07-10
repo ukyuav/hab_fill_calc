@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Fill Calculator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="calc.js"></script>
+</head>
+
+<body>
+    <h1>Helium Balloon Fill Calculator</h1>
+    <form>
+        <div class="row">
+            <div class="col-sm">
+                <label for="m_balloon_g_input">Mass of balloon</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="e.g., 600" id="m_balloon_g_input">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">grams</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <label for="p_mb_input">Current air pressure</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="e.g., 1013" id="p_mb_input">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">millibars</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <label for="vel_input">Desired rise rate</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="e.g., 5" id="vel_input"> 
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">meters per second</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <label for="m_payload_g_input">Mass of payload</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="e.g., 100" id="m_payload_g_input">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">grams</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <label for="temp_c_input">Current air temperature</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="e.g., 30" id="temp_c_input"> 
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1">°C</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <label for="V_tank_input">Tank volume</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="e.g., 2990" id="V_tank_input">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon1"> in<sup>3</sup></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="btn btn-secondary" data-toggle="collapse" href="#constants" role="button" aria-expanded="false" aria-controls="constants">
+            Constants
+        </a>
+        <div class="collapse" id="constants">
+            <div class="card card-body">
+                <div class="row">
+                    <div class="col-sm">
+                        <label for="c_d_input">Drag Coefficient</label>
+                        <input type="number" class="form-control" placeholder="e.g., 0.3" value="0.3" id="c_d_input">
+                    </div>
+                    <div class="col-sm">
+                        <label for="M_he_input">Helium Molar Mass</label>
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" placeholder="e.g., 0.0040026" value="0.0040026" id="M_he_input">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon1">kg/mol</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <label for="R_input">Gas constant</label>
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" placeholder="e.g., 8.314" value="8.314" id="R_input"> 
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon1">J* mol<sup>-1</sup>* K<sup>-1</sup></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm">
+                        <label for="g_input">Gravitational Acceleration</label>
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" placeholder="e.g., 9.81" value="9.81" id="g_input">
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon1">m*s<sup>-2</sup></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <label for="M_air_input">Air Molar Mass</label>
+                        <div class="input-group mb-3">
+                            <input type="number" class="form-control" placeholder="e.g., 0.02896", value="0.02896" id="M_air_input"> 
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="basic-addon1">kg/mol</span>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </form>
+    <br>
+    <button type="button" class="btn btn-primary" onclick="calculate();">Calculate Fill</button>
+
+</body>
+
+</html>
