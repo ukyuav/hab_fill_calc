@@ -12,7 +12,14 @@ var inputs = {
     p_mb_input : null,
     temp_c_input : null,
 }
+function checkFilled(){
+    if (document.getElementById("form-1").checkValidity() === true){
+        return 0;
+    }
 
+    document.getElementById("alert-area").insertAdjacentHTML("beforeend", '<div class="alert alert-danger" role="alert">Please fix missing or incorrect fields.</div>');
+    return 1;
+}
 function getInputValue(){
     inputs.c_d = Number(document.getElementById("c_d_input").value);
     inputs.vel = Number(document.getElementById("vel_input").value);
@@ -40,6 +47,10 @@ function getInputValue(){
 }
 
 function calculate(){
+    var invalid = checkFilled();
+    if (invalid !== 0){
+        return invalid;
+    }
     getInputValue();
     console.log(inputs.c_d);
     m_balloon = inputs.m_balloon_g/1000.0;

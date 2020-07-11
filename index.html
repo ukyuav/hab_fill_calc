@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Fill Calculator</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -19,8 +20,9 @@
 </head>
 
 <body>
-    <h1>Helium Balloon Fill Calculator</h1>
-    <form>
+    <h1 class="mx-3" >Helium Balloon Fill Calculator</h1>
+    <div id="alert-area"></div>
+    <form class="mx-3" id = "form-1">
         <div class="row">
             <div class="col-lg">
                 <label for="m_balloon_g_input">Mass of balloon</label>
@@ -79,7 +81,7 @@
                 </div>
             </div>
         </div>
-        <a class="btn btn-secondary" data-toggle="collapse" href="#constants" role="button" aria-expanded="false" aria-controls="constants">
+        <a class="btn btn-secondary mb-3" data-toggle="collapse" href="#constants" role="button" aria-expanded="false" aria-controls="constants">
             Constants
         </a>
         <div class="collapse" id="constants">
@@ -130,9 +132,9 @@
                 </div> 
             </div>
         </div>
+        <br>
+        <button type="submit" class="btn btn-primary mt-3" onclick="calculate();">Calculate Fill</button>
     </form>
-    <br>
-    <button type="button" class="btn btn-primary" onclick="calculate();">Calculate Fill</button>
 
 </body>
 
