@@ -7,19 +7,85 @@ var inputs = {
     g : null, //ACCELERATION DUE TO GRAVITY (m*s^(-2))
     V_tank : null, // Internal volume of tank (in^3)
     // Sorry about English units on this one but we need it for psi
-    m_balloon_g : null,
-    m_payload_g : null,
-    p_mb_input : null,
-    temp_c_input : null,
+    m_balloon_g : null, // Mass of balloon (g)
+    m_payload_g : null, // Mass of payload (g)
+    p_mb_input : null, // Surface air pressure (millibars)
+    temp_c_input : null, // Surface air temp (degrees Celsius)
 }
-function checkFilled(){
-    if (document.getElementById("form-1").checkValidity() === true){
-        return 0;
+
+var outputs = {
+    mass : null, // Mass of gas needed (kg)
+    volume_l: null, // Volume of Gas needed (l)
+    volume_m3: null, // Volume of Gas needed (m^3)
+    volume_ft3: null, // Volume of Gas needed (ft^3)
+    volume_in3: null, // Volume of Gas needed (in^3)
+    psi: null, // Pressure needed to be released from tank (psi)
+    gross_lift: null, // Lift created by the gas (kg)
+    free_lift: null, // Amount of lift beyond what is needed to support the mass of the balloon and payload (kg)
+}
+const error_messages = {
+    1 : 'All inputs except for temperature should be positive.',
+    2 : 'The molar mass of your lifting gas must be less than that of air.'
+}
+
+function validate(){
+    var errors = [];
+
+    //Check for problems with input
+
+    //Check that all inputs (except temp) are positive
+    for(const property in inputs){
+        if(property != "temp_c_input" && inputs[property] < 0){
+            errors.push(1);
+        }
     }
 
-    document.getElementById("alert-area").insertAdjacentHTML("beforeend", '<div class="alert alert-danger" role="alert">Please fix missing or incorrect fields.</div>');
-    return 1;
+    //Check that we are using a lighter-than-air-gas
+    if(inputs.M_he >= inputs.M_air){
+        errors.push(2);
+    }
+
+    showError(errors);
+    return errors.length;
 }
+
+function showError(errors){
+    var alert_area = document.getElementById("alert-area");
+    var alert = document.getElementById("alert-0");
+
+    // Clear previous errors
+    while (alert_area.lastChild.id !== 'alert-0') {
+        alert_area.removeChild(alert_area.lastChild);
+    }
+
+    if(errors.length ===0){
+        alert_area.hidden = true;
+    }
+    else{ // There's a problem with the data
+        // Hide the output
+        document.getElementById("results-area").hidden = true;
+        //  Put up an alert
+        alert_area.hidden = false;
+        alert.innerHTML = "Please fix missing or incorrect fields.";
+
+        for(error in errors){
+            var alert_id = "alert-" + errors[error];
+            alert_area.insertAdjacentHTML("beforeend", '<div class="alert alert-danger" role="alert"></div>');
+            var new_alert = alert_area.lastElementChild;
+            new_alert.setAttribute("id", alert_id);
+            new_alert.innerHTML = error_messages[errors[error]];
+        }
+    }
+}
+
+function outputAnswer(mass_he_needed){
+    var results_area = document.getElementById("results-area");
+    results_area.hidden = false;
+    for(const property in outputs){
+        document.getElementById(property).innerHTML = outputs[property].toFixed(3);
+    }
+}
+
 function getInputValue(){
     inputs.c_d = Number(document.getElementById("c_d_input").value);
     inputs.vel = Number(document.getElementById("vel_input").value);
@@ -32,40 +98,22 @@ function getInputValue(){
     inputs.m_payload_g = Number(document.getElementById("m_payload_g_input").value);
     inputs.p_mb_input = Number(document.getElementById("p_mb_input").value);
     inputs.temp_c_input = Number(document.getElementById("temp_c_input").value);
-
-    console.log(inputs.c_d);
-    console.log(inputs.vel);
-    console.log(inputs.M_he);
-    console.log(inputs.M_air);
-    console.log(inputs.R);
-    console.log(inputs.g);
-    console.log(inputs.V_tank);
-    console.log(inputs.m_balloon_g);
-    console.log(inputs.m_payload_g);
-    console.log(inputs.p_mb_input);
-    console.log(inputs.temp_c_input);
 }
 
-function calculate(){
-    var invalid = checkFilled();
-    if (invalid !== 0){
-        return invalid;
-    }
+function calculate(){    
     getInputValue();
-    console.log(inputs.c_d);
-    m_balloon = inputs.m_balloon_g/1000.0;
-    console.log(m_balloon);
-    m_payload = inputs.m_payload_g/1000.0;
-    console.log(m_payload);
-    p_air = inputs.p_mb_input * 100.0;
-    console.log(p_air);
-    temp = 273.15 + inputs.temp_c_input;
-    console.log(temp);
 
+    var invalid = validate();
+    if(invalid != 0){
+        return false;
+    }
+
+    var m_balloon = inputs.m_balloon_g/1000.0; // Mass of balloon in kg
+    var m_payload = inputs.m_payload_g/1000.0; // Mass of payload in kg
+    var p_air = inputs.p_mb_input * 100.0; // Surface air pressure in pascals
+    var temp = 273.15 + inputs.temp_c_input; // Temp in Kelvin
     var rho_he = (p_air * inputs.M_he)/(inputs.R * temp); // Density of Helium (kg/m^3)
     var rho_air = (p_air * inputs.M_air)/(inputs.R * temp); // Density of Air (kg/m^3)
-    console.log(rho_he);
-    console.log(rho_air);
 
     var buoyant_accel = ((rho_air - rho_he) * inputs.g) / rho_he // m*s^-2
     var drag_accel = inputs.c_d * 0.5  * rho_air * Math.pow(inputs.vel,2) * Math.PI * Math.pow((3.0/(4.0 * Math.PI))/ rho_he,2.0/3.0) // m*s^-2
@@ -86,26 +134,18 @@ function calculate(){
     var V_i = (V_m/0.0283168)*(12**3) // Volume of Gas needed (in^3)
 
     var P_i = p_air/6895; // Atmospheric pressure in psi (lb*in^-2)
-    var Pf = (P_i/inputs.V_tank) * V_i;
 
-    var gross_lift = (buoyant_accel * mass_he_needed)/inputs.g;
+    var gross_lift = (buoyant_accel * mass_he_needed)/inputs.g; // Amount of lift created by the gas
 
-    var free_lift = gross_lift - (m_payload + m_balloon);
+    outputs.mass        = mass_he_needed;
+    outputs.volume_m3   = V_m;
+    outputs.volume_in3  = V_i;
+    outputs.volume_ft3  = V_i /(12**3); 
+    outputs.volume_l    = V_m * 1000;
+    outputs.psi         = (P_i/inputs.V_tank) * V_i;
+    outputs.gross_lift  = gross_lift;
+    outputs.free_lift   = gross_lift - (m_payload + m_balloon);
 
-    console.log(mass_he_needed);
+    outputAnswer();
+    return false;
 }
-
-/* var c_d = 0.3;
-var vel = 5.0;
-var M_he = 0.0040026;  // HELIUM MOLAR MASS (kg/mol)
-var M_air = 0.02896; // AIR MOLAR MASS (kg/mol)
-var R = 8.314; // GAS CONSTANT (J* mol^(-1) * K^(-1))
-var g = 9.81; //ACCELERATION DUE TO GRAVITY (m*s^(-2))
-var V_tank = 2990 // Internal volume of tank (in^3)
-// Sorry about English units on this one but we need it for psi
-
-var m_balloon = 0.6;
-var m_payload = 0.1;
-var p_air = 101300.0;
-var temp = 273.15 + 32;
- */
