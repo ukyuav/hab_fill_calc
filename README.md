@@ -9,4 +9,3 @@ Offline usage:
 Download both calc.js and index.html to the same folder. 
 From the file manager, right-click on index.html and open in a browser.
 The fancy spacing and button styles are provided by Bootstrap which is loaded by a CDN and are only available with an internet connection.
-Hover over the 
